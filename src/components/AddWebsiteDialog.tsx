@@ -46,20 +46,28 @@ export function AddWebsiteDialog({ children }: { children: ReactNode }) {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const success = addWebsite(values.name, values.url);
-    if (success) {
-      toast({
-        title: "Website Added",
-        description: `${values.name} has been added to your list.`,
-      });
-      form.reset();
-      setOpen(false);
-    } else {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+        const success = await addWebsite(values.name, values.url);
+        if (success) {
+          toast({
+            title: "Website Added",
+            description: `${values.name} has been added to your list.`,
+          });
+          form.reset();
+          setOpen(false);
+        } else {
+            toast({
+                variant: "destructive",
+                title: "Already Exists",
+                description: `The website with this URL is already in your list.`,
+            });
+        }
+    } catch (error) {
         toast({
             variant: "destructive",
-            title: "Already Exists",
-            description: `The website with this URL is already in your list.`,
+            title: "Error",
+            description: "Failed to add website. Please try again.",
         });
     }
   }

@@ -9,11 +9,10 @@ import React, {
   type ReactNode,
 } from "react";
 import type { Website } from "@/lib/types";
-import initialWebsites from "../../fakeDB.json";
 
 interface WebsiteDataContextType {
   websites: Website[];
-  addWebsite: (name: string, url:string) => boolean;
+  addWebsite: (name: string, url:string) => Promise<boolean>;
   incrementAccessCount: (id: string) => void;
   isLoaded: boolean;
 }
@@ -25,49 +24,58 @@ const WebsiteDataContext = createContext<WebsiteDataContextType | undefined>(
 export function WebsiteDataProvider({ children }: { children: ReactNode }) {
   const [websites, setWebsites] = useState<Website[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchWebsites = useCallback(async () => {
+    setIsLoaded(false);
     try {
-      const storedWebsites = localStorage.getItem("websites");
-      if (storedWebsites) {
-        setWebsites(JSON.parse(storedWebsites));
-      } else {
-        setWebsites(initialWebsites as Website[]);
+      const response = await fetch('/api/websites-file');
+      if (!response.ok) {
+        throw new Error('Failed to fetch websites');
       }
-    } catch (error) {
-      console.error("Failed to load websites from localStorage", error);
-      setWebsites(initialWebsites as Website[]);
+      const data = await response.json();
+      setWebsites(data);
+    } catch (err: any) {
+        console.error("Failed to fetch websites:", err);
+        setError("Could not load websites. Please try again later.");
     } finally {
-        setIsLoaded(true);
+      setIsLoaded(true);
     }
   }, []);
 
   useEffect(() => {
-    if (isLoaded) {
-      try {
-        localStorage.setItem("websites", JSON.stringify(websites));
-      } catch (error) {
-        console.error("Failed to save websites to localStorage", error);
-      }
-    }
-  }, [websites, isLoaded]);
+    fetchWebsites();
+  }, [fetchWebsites]);
 
   const addWebsite = useCallback(
-    (name: string, url: string) => {
-      const newWebsite: Website = {
-        id: crypto.randomUUID(),
-        name,
-        url,
-        count: 0,
-      };
-      // prevent duplicates
-      if (websites.some(site => site.url === url)) {
+    async (name: string, url: string) => {
+      try {
+        const response = await fetch('/api/websites-file', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name, url }),
+        });
+
+        if (response.status === 409) {
+          return false; // Already exists
+        }
+
+        if (!response.ok) {
+            throw new Error('Failed to add website');
+        }
+
+        const newWebsite = await response.json();
+        setWebsites((prev) => [...prev, newWebsite]);
+        return true;
+      } catch (error) {
+        console.error("Failed to add website:", error);
+        setError("Could not add website. Please try again later.");
         return false;
       }
-      setWebsites((prev) => [...prev, newWebsite]);
-      return true;
     },
-    [websites]
+    []
   );
 
   const incrementAccessCount = useCallback((id: string) => {
@@ -76,12 +84,14 @@ export function WebsiteDataProvider({ children }: { children: ReactNode }) {
         site.id === id ? { ...site, count: site.count + 1 } : site
       )
     );
+     // Note: This only updates local state. A PUT/PATCH request would be needed for persistence.
   }, []);
 
   const value = { websites, addWebsite, incrementAccessCount, isLoaded };
 
   return (
     <WebsiteDataContext.Provider value={value}>
+      {error && <div className="p-4 text-center text-red-500 bg-red-100">{error}</div>}
       {children}
     </WebsiteDataContext.Provider>
   );
