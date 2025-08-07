@@ -9,8 +9,8 @@ import { WebsiteDataProvider } from "@/contexts/WebsiteDataProvider";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "WebStats Central",
-  description: "Track your website access statistics and get smart suggestions.",
+  title: "webDirectory",
+  description: "Your daily-use website directory with access statistics.",
 };
 
 export default function RootLayout({
