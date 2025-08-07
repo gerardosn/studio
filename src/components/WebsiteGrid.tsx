@@ -1,10 +1,9 @@
 "use client";
 
 import { useWebsiteData } from "@/contexts/WebsiteDataProvider";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import { Globe, PlusCircle } from "lucide-react";
-import Link from "next/link";
+import { PlusCircle } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
 import { AddWebsiteDialog } from "./AddWebsiteDialog";
 import Image from "next/image";
@@ -48,7 +47,7 @@ function WebsiteCard({
       role="button"
       aria-label={`Open ${name}`}
     >
-      <CardHeader className="flex-row items-center space-x-4 p-4">
+      <CardHeader className="flex-row items-center space-x-4 p-4 pb-2">
         <Image 
             src={getFaviconUrl(url)} 
             alt={`${name} favicon`}
@@ -75,18 +74,18 @@ export function WebsiteGrid() {
 
   if (!isLoaded) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-2 gap-4">
         {Array.from({ length: 6 }).map((_, i) => (
           <Card key={i}>
             <CardHeader className="flex-row items-center space-x-4 pb-2">
-              <Skeleton className="h-12 w-12 rounded-full" />
-              <Skeleton className="h-6 w-3/4" />
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <div className="space-y-2">
+                 <Skeleton className="h-4 w-20" />
+                 <Skeleton className="h-3 w-16" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <Skeleton className="h-4 w-full" />
-            </CardContent>
             <CardFooter>
-              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="h-4 w-24" />
             </CardFooter>
           </Card>
         ))}
@@ -112,7 +111,7 @@ export function WebsiteGrid() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-2 gap-4">
       {sortedWebsites.map((site) => (
         <WebsiteCard
           key={site.id}
