@@ -9,7 +9,7 @@ import React, {
   type ReactNode,
 } from "react";
 import type { Website } from "@/lib/types";
-import { initialWebsites } from "@/lib/fakeDB";
+import initialWebsites from "../../fakeDB.json";
 
 interface WebsiteDataContextType {
   websites: Website[];
@@ -32,11 +32,11 @@ export function WebsiteDataProvider({ children }: { children: ReactNode }) {
       if (storedWebsites) {
         setWebsites(JSON.parse(storedWebsites));
       } else {
-        setWebsites(initialWebsites);
+        setWebsites(initialWebsites as Website[]);
       }
     } catch (error) {
       console.error("Failed to load websites from localStorage", error);
-      setWebsites(initialWebsites);
+      setWebsites(initialWebsites as Website[]);
     } finally {
         setIsLoaded(true);
     }
