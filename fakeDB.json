@@ -40,5 +40,17 @@
     "name": "Gemini",
     "url": "https://gemini.google.com",
     "count": 0
+  },
+  {
+    "id": "848ea51c-de90-4fc1-b409-6862196d95bd",
+    "name": "Meta ai",
+    "url": "https://www.meta.ai",
+    "count": 0
+  },
+  {
+    "id": "cd74187a-d6e9-44e5-8316-08509ce57219",
+    "name": "Perplexity",
+    "url": "https://www.perplexity.ai",
+    "count": 0
   }
 ]

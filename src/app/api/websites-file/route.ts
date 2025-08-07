@@ -75,6 +75,57 @@ export async function POST(req: NextRequest) {
   }
 }
 
+export async function PUT(req: NextRequest) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id');
+        if (!id) {
+            return NextResponse.json({ message: 'Website ID is required' }, { status: 400 });
+        }
+
+        const { name, url, force } = (await req.json()) as { name: string; url: string; force?: boolean };
+        if (!name || !url) {
+            return NextResponse.json({ message: 'Name and URL are required' }, { status: 400 });
+        }
+
+        if (!force) {
+            try {
+                const response = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
+                if (!response.ok) {
+                    return NextResponse.json({ message: `Website returned a bad status: ${response.status}`, verificationFailed: true }, { status: 400 });
+                }
+            } catch (fetchError) {
+                console.error('URL verification failed:', fetchError);
+                return NextResponse.json({ message: 'Website is not reachable. Please check the URL.', verificationFailed: true }, { status: 400 });
+            }
+        }
+        
+        const websites = await readDb();
+        const siteIndex = websites.findIndex(site => site.id === id);
+
+        if (siteIndex === -1) {
+            return NextResponse.json({ message: 'Website not found' }, { status: 404 });
+        }
+
+        const existingUrl = websites.find(site => site.url === url && site.id !== id);
+        if (existingUrl) {
+            return NextResponse.json({ message: 'Another website with this URL already exists' }, { status: 409 });
+        }
+        
+        const updatedWebsite = { ...websites[siteIndex], name, url };
+        websites[siteIndex] = updatedWebsite;
+        
+        await writeDb(websites);
+
+        return NextResponse.json(updatedWebsite, { status: 200 });
+
+    } catch (error) {
+        console.error('Failed to update website:', error);
+        return NextResponse.json({ message: 'Failed to update website' }, { status: 500 });
+    }
+}
+
+
 export async function DELETE(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);

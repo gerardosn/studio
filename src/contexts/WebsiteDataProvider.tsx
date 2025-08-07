@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, {
@@ -16,9 +17,16 @@ interface AddWebsiteResult {
     verificationFailed?: boolean;
 }
 
+interface EditWebsiteResult {
+    success: boolean;
+    message?: string;
+    verificationFailed?: boolean;
+}
+
 interface WebsiteDataContextType {
   websites: Website[];
   addWebsite: (name: string, url:string, force?: boolean) => Promise<AddWebsiteResult>;
+  editWebsite: (id: string, name: string, url: string, force?: boolean) => Promise<EditWebsiteResult>;
   deleteWebsite: (id: string) => Promise<boolean>;
   incrementAccessCount: (id: string) => void;
   isLoaded: boolean;
@@ -82,6 +90,32 @@ export function WebsiteDataProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const editWebsite = useCallback(
+    async (id: string, name: string, url: string, force: boolean = false): Promise<EditWebsiteResult> => {
+      try {
+        const response = await fetch(`/api/websites-file?id=${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, url, force }),
+        });
+        const responseData = await response.json();
+        if (!response.ok) {
+          return { success: false, message: responseData.message, verificationFailed: responseData.verificationFailed };
+        }
+        setWebsites((prev) =>
+          prev.map((site) => (site.id === id ? responseData : site))
+        );
+        return { success: true };
+      } catch (error) {
+        console.error("Failed to edit website:", error);
+        return { success: false, message: "An unexpected error occurred." };
+      }
+    },
+    []
+  );
+
   const deleteWebsite = useCallback(async (id: string) => {
     try {
         const response = await fetch(`/api/websites-file?id=${id}`, {
@@ -110,7 +144,7 @@ export function WebsiteDataProvider({ children }: { children: ReactNode }) {
      // Note: This only updates local state. A PUT/PATCH request would be needed for persistence.
   }, []);
 
-  const value = { websites, addWebsite, deleteWebsite, incrementAccessCount, isLoaded };
+  const value = { websites, addWebsite, editWebsite, deleteWebsite, incrementAccessCount, isLoaded };
 
   return (
     <WebsiteDataContext.Provider value={value}>

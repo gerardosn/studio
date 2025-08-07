@@ -10,9 +10,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
 import { DeleteWebsiteDialog } from "./DeleteWebsiteDialog";
+import { EditWebsiteDialog } from "./EditWebsiteDialog";
 
 export function ManageWebsites() {
   const { websites, isLoaded } = useWebsiteData();
@@ -51,7 +52,13 @@ export function ManageWebsites() {
           {websites.map((site) => (
             <TableRow key={site.id}>
               <TableCell className="font-medium">{site.name}</TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-right space-x-2">
+                 <EditWebsiteDialog website={site}>
+                    <Button variant="ghost" size="icon">
+                        <Pencil className="h-4 w-4" />
+                        <span className="sr-only">Edit</span>
+                    </Button>
+                </EditWebsiteDialog>
                 <DeleteWebsiteDialog website={site}>
                     <Button variant="ghost" size="icon">
                         <Trash2 className="h-4 w-4 text-destructive" />
