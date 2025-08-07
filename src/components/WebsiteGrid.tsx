@@ -39,7 +39,7 @@ function WebsiteCard({
         <div className="p-3 rounded-full bg-primary/10 text-primary">
           <Globe className="h-6 w-6" />
         </div>
-        <CardTitle className="text-lg font-medium">{name}</CardTitle>
+        <CardTitle className="text-base font-medium truncate">{name}</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow">
         <p className="text-sm text-muted-foreground truncate">{url}</p>
