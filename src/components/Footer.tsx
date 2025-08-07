@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { Home, BarChart2, Settings, Plus, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AddWebsiteDialog } from "./AddWebsiteDialog";
-import { SmartSuggestionDialog } from "./SmartSuggestionDialog";
 import {
   Tooltip,
   TooltipContent,
@@ -17,8 +16,12 @@ import { Button } from "./ui/button";
 const navItems = [
   { href: "/", label: "Home", icon: Home },
   { href: "/stats", label: "Statistics", icon: BarChart2 },
-  { href: "/settings", label: "Settings", icon: Settings },
 ];
+
+const actionItems = [
+    { label: "Add", icon: Plus, DialogComponent: AddWebsiteDialog },
+    { href: "/settings", label: "Settings", icon: Settings },
+]
 
 export function Footer() {
   const pathname = usePathname();
@@ -26,7 +29,7 @@ export function Footer() {
   return (
     <footer className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-20 max-w-[360px] items-center justify-around">
-        <nav className="grid w-full grid-cols-3 items-center gap-4 text-center">
+        <nav className="grid w-full grid-cols-4 items-center gap-4 text-center">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -40,6 +43,24 @@ export function Footer() {
               <span className="text-xs font-medium">{item.label}</span>
             </Link>
           ))}
+           <AddWebsiteDialog>
+            <button className={cn(
+                "flex flex-col items-center justify-center gap-1 text-muted-foreground transition-colors hover:text-primary"
+              )}>
+              <Plus className="h-6 w-6" />
+              <span className="text-xs font-medium">Add</span>
+            </button>
+          </AddWebsiteDialog>
+          <Link
+              href="/settings"
+              className={cn(
+                "flex flex-col items-center justify-center gap-1 text-muted-foreground transition-colors hover:text-primary",
+                pathname === "/settings" && "text-primary"
+              )}
+            >
+              <Settings className="h-6 w-6" />
+              <span className="text-xs font-medium">Settings</span>
+            </Link>
         </nav>
       </div>
     </footer>
