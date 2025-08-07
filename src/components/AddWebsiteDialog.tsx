@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, type ReactNode } from "react";
@@ -30,7 +31,7 @@ const formSchema = z.object({
   name: z.string().min(2, {
     message: "Name must be at least 2 characters.",
   }),
-  url: z.string().url({ message: "Please enter a valid URL." }),
+  url: z.string().min(1, { message: "URL cannot be empty." }),
 });
 
 export function AddWebsiteDialog({ children }: { children: ReactNode }) {
@@ -48,7 +49,19 @@ export function AddWebsiteDialog({ children }: { children: ReactNode }) {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-        const success = await addWebsite(values.name, values.url);
+        let fullUrl = values.url;
+        if (!/^https?:\/\//i.test(fullUrl)) {
+            fullUrl = 'https://' + fullUrl;
+        }
+
+        // Validate the final URL again
+        const urlCheck = z.string().url().safeParse(fullUrl);
+        if (!urlCheck.success) {
+            form.setError("url", { type: "manual", message: "Please enter a valid URL." });
+            return;
+        }
+
+        const success = await addWebsite(values.name, fullUrl);
         if (success) {
           toast({
             title: "Website Added",
@@ -76,7 +89,9 @@ export function AddWebsiteDialog({ children }: { children: ReactNode }) {
     const url = e.target.value;
     if (form.getValues("name") === "" && url) {
       try {
-        const hostname = new URL(url).hostname;
+        // Prepend https:// if it's missing to create a valid URL object
+        const fullUrl = url.startsWith('http') ? url : `https://${url}`;
+        const hostname = new URL(fullUrl).hostname;
         const name = hostname.replace(/^www\./, "").split(".")[0];
         const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
         form.setValue("name", capitalizedName);
@@ -105,7 +120,7 @@ export function AddWebsiteDialog({ children }: { children: ReactNode }) {
                 <FormItem>
                   <FormLabel>Website URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://example.com" {...field} onBlur={onUrlBlur} />
+                    <Input placeholder="example.com" {...field} onBlur={onUrlBlur} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
