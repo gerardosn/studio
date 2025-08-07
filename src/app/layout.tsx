@@ -43,7 +43,7 @@ export default function RootLayout({
           <WebsiteDataProvider>
             <div className="flex min-h-screen w-full flex-col">
               <Header />
-              <main className="flex-1 container mx-auto p-4 md:p-6 pb-24" style={{ maxWidth: '412px' }}>
+              <main className="flex-1 container mx-auto p-4 md:p-6 pb-24">
                 {children}
               </main>
               <Footer />
