@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/toaster";
 import { Header } from "@/components/Header";
 import { WebsiteDataProvider } from "@/contexts/WebsiteDataProvider";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-roboto",
+});
 
 export const metadata: Metadata = {
   title: "webDirectory",
@@ -24,11 +28,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body className={`${inter.variable} font-body antialiased`}>
+      <body className={`${roboto.variable} font-body antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -38,7 +42,7 @@ export default function RootLayout({
           <WebsiteDataProvider>
             <div className="flex min-h-screen w-full flex-col">
               <Header />
-              <main className="flex-1 container mx-auto p-4 md:p-8">
+              <main className="flex-1 container mx-auto p-4 md:p-6">
                 {children}
               </main>
               <Toaster />
