@@ -7,6 +7,7 @@ import { Globe, PlusCircle } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "./ui/skeleton";
 import { AddWebsiteDialog } from "./AddWebsiteDialog";
+import Image from "next/image";
 
 function WebsiteCard({
   id,
@@ -26,6 +27,18 @@ function WebsiteCard({
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
+  const getFaviconUrl = (pageUrl: string) => {
+    try {
+      const urlObject = new URL(pageUrl);
+      const domain = urlObject.hostname;
+      return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+    } catch (error) {
+      console.error("Invalid URL for favicon:", pageUrl);
+      return "/"; // Return a fallback or empty path
+    }
+  };
+
+
   return (
     <Card
       className="flex flex-col h-full transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1 cursor-pointer"
@@ -36,9 +49,14 @@ function WebsiteCard({
       aria-label={`Open ${name}`}
     >
       <CardHeader className="flex-row items-center space-x-4 pb-2">
-        <div className="p-3 rounded-full bg-primary/10 text-primary">
-          <Globe className="h-6 w-6" />
-        </div>
+        <Image 
+            src={getFaviconUrl(url)} 
+            alt={`${name} favicon`}
+            width={24}
+            height={24}
+            className="rounded-full"
+            unoptimized
+            />
         <CardTitle className="text-base font-medium truncate">{name}</CardTitle>
       </CardHeader>
       <CardContent className="flex-grow">
