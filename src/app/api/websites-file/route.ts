@@ -62,3 +62,28 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Failed to add website' }, { status: 500 });
   }
 }
+
+export async function DELETE(req: NextRequest) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id');
+
+        if (!id) {
+            return NextResponse.json({ message: 'Website ID is required' }, { status: 400 });
+        }
+
+        const websites = await readDb();
+        const updatedWebsites = websites.filter((site) => site.id !== id);
+
+        if (websites.length === updatedWebsites.length) {
+            return NextResponse.json({ message: 'Website not found' }, { status: 404 });
+        }
+
+        await writeDb(updatedWebsites);
+
+        return NextResponse.json({ message: 'Website deleted successfully' }, { status: 200 });
+    } catch (error) {
+        console.error('Failed to delete website:', error);
+        return NextResponse.json({ message: 'Failed to delete website' }, { status: 500 });
+    }
+}

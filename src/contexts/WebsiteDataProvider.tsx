@@ -13,6 +13,7 @@ import type { Website } from "@/lib/types";
 interface WebsiteDataContextType {
   websites: Website[];
   addWebsite: (name: string, url:string) => Promise<boolean>;
+  deleteWebsite: (id: string) => Promise<boolean>;
   incrementAccessCount: (id: string) => void;
   isLoaded: boolean;
 }
@@ -78,6 +79,25 @@ export function WebsiteDataProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const deleteWebsite = useCallback(async (id: string) => {
+    try {
+        const response = await fetch(`/api/websites-file?id=${id}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to delete website');
+        }
+
+        setWebsites((prev) => prev.filter((site) => site.id !== id));
+        return true;
+    } catch (error) {
+        console.error("Failed to delete website:", error);
+        setError("Could not delete website. Please try again later.");
+        return false;
+    }
+  }, []);
+
   const incrementAccessCount = useCallback((id: string) => {
     setWebsites((prev) =>
       prev.map((site) =>
@@ -87,7 +107,7 @@ export function WebsiteDataProvider({ children }: { children: ReactNode }) {
      // Note: This only updates local state. A PUT/PATCH request would be needed for persistence.
   }, []);
 
-  const value = { websites, addWebsite, incrementAccessCount, isLoaded };
+  const value = { websites, addWebsite, deleteWebsite, incrementAccessCount, isLoaded };
 
   return (
     <WebsiteDataContext.Provider value={value}>

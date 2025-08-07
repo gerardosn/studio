@@ -1,6 +1,8 @@
-import { Settings } from "lucide-react";
+import { Settings, Trash2 } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function SettingsPage() {
   return (
@@ -24,6 +26,23 @@ export default function SettingsPage() {
             <span className="font-medium">Toggle Theme</span>
             <ThemeToggle />
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+            <CardTitle>Data Management</CardTitle>
+            <CardDescription>
+                Modify your saved websites.
+            </CardDescription>
+        </CardHeader>
+        <CardContent>
+            <Link href="/settings/manage-websites" passHref>
+                <Button variant="outline" className="w-full">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Manage Websites
+                </Button>
+            </Link>
         </CardContent>
       </Card>
     </div>
