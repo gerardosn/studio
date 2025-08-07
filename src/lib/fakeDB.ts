@@ -1,0 +1,10 @@
+import type { Website } from "@/lib/types";
+
+export const initialWebsites: Website[] = [
+  { id: "1", name: "Google", url: "https://google.com", count: 18 },
+  { id: "2", name: "YouTube", url: "https://youtube.com", count: 25 },
+  { id: "3", name: "Wikipedia", url: "https://wikipedia.org", count: 9 },
+  { id: "4", name: "GitHub", url: "https://github.com", count: 15 },
+  { id: "5", name: "Reddit", url: "https://reddit.com", count: 21 },
+  { id: "6", name: "Twitter", url: "https://x.com", count: 12 },
+];
