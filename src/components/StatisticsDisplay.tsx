@@ -12,8 +12,6 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
 } from "@/components/ui/chart";
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import {
@@ -42,7 +40,7 @@ export function StatisticsDisplay() {
 
   if (!isLoaded) {
     return (
-        <div className="grid gap-8 md:grid-cols-2">
+        <div className="grid gap-8">
             <Card>
                 <CardHeader>
                     <Skeleton className="h-6 w-3/4" />
@@ -80,8 +78,8 @@ export function StatisticsDisplay() {
   }
 
   return (
-    <div className="grid gap-8 md:grid-cols-5">
-      <Card className="md:col-span-3">
+    <div className="grid gap-8">
+      <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-primary" />
@@ -121,7 +119,7 @@ export function StatisticsDisplay() {
         </CardContent>
       </Card>
 
-      <Card className="md:col-span-2">
+      <Card>
         <CardHeader>
           <CardTitle>All Websites</CardTitle>
           <CardDescription>A complete list of your tracked sites and their access counts.</CardDescription>
