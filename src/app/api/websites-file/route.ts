@@ -39,6 +39,16 @@ export async function POST(req: NextRequest) {
     if (!name || !url) {
       return NextResponse.json({ message: 'Name and URL are required' }, { status: 400 });
     }
+    
+    try {
+        const response = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
+        if (!response.ok) {
+             return NextResponse.json({ message: `Website returned a bad status: ${response.status}` }, { status: 400 });
+        }
+    } catch (fetchError) {
+        console.error('URL verification failed:', fetchError);
+        return NextResponse.json({ message: 'Website is not reachable. Please check the URL.' }, { status: 400 });
+    }
 
     const websites = await readDb();
     

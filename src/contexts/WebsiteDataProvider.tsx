@@ -10,9 +10,14 @@ import React, {
 } from "react";
 import type { Website } from "@/lib/types";
 
+interface AddWebsiteResult {
+    success: boolean;
+    message?: string;
+}
+
 interface WebsiteDataContextType {
   websites: Website[];
-  addWebsite: (name: string, url:string) => Promise<boolean>;
+  addWebsite: (name: string, url:string) => Promise<AddWebsiteResult>;
   deleteWebsite: (id: string) => Promise<boolean>;
   incrementAccessCount: (id: string) => void;
   isLoaded: boolean;
@@ -49,7 +54,7 @@ export function WebsiteDataProvider({ children }: { children: ReactNode }) {
   }, [fetchWebsites]);
 
   const addWebsite = useCallback(
-    async (name: string, url: string) => {
+    async (name: string, url: string): Promise<AddWebsiteResult> => {
       try {
         const response = await fetch('/api/websites-file', {
             method: 'POST',
@@ -59,21 +64,18 @@ export function WebsiteDataProvider({ children }: { children: ReactNode }) {
             body: JSON.stringify({ name, url }),
         });
 
-        if (response.status === 409) {
-          return false; // Already exists
-        }
+        const responseData = await response.json();
 
         if (!response.ok) {
-            throw new Error('Failed to add website');
+            return { success: false, message: responseData.message || 'Failed to add website' };
         }
 
-        const newWebsite = await response.json();
-        setWebsites((prev) => [...prev, newWebsite]);
-        return true;
+        setWebsites((prev) => [...prev, responseData]);
+        return { success: true };
       } catch (error) {
         console.error("Failed to add website:", error);
         setError("Could not add website. Please try again later.");
-        return false;
+        return { success: false, message: 'An unexpected error occurred.' };
       }
     },
     []

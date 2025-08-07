@@ -54,15 +54,14 @@ export function AddWebsiteDialog({ children }: { children: ReactNode }) {
             fullUrl = 'https://' + fullUrl;
         }
 
-        // Validate the final URL again
         const urlCheck = z.string().url().safeParse(fullUrl);
         if (!urlCheck.success) {
             form.setError("url", { type: "manual", message: "Please enter a valid URL." });
             return;
         }
 
-        const success = await addWebsite(values.name, fullUrl);
-        if (success) {
+        const result = await addWebsite(values.name, fullUrl);
+        if (result.success) {
           toast({
             title: "Website Added",
             description: `${values.name} has been added to your list.`,
@@ -72,8 +71,8 @@ export function AddWebsiteDialog({ children }: { children: ReactNode }) {
         } else {
             toast({
                 variant: "destructive",
-                title: "Already Exists",
-                description: `The website with this URL is already in your list.`,
+                title: "Error Adding Website",
+                description: result.message || "An unknown error occurred.",
             });
         }
     } catch (error) {
