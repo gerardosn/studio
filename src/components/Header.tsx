@@ -24,7 +24,7 @@ export function Header() {
           </Link>
         </div>
 
-        <nav className="flex flex-1 justify-center">
+        <nav className="flex flex-1 justify-end">
           <div className="flex items-center space-x-1 rounded-full border bg-background p-0.5">
             <TooltipProvider>
               <AddWebsiteDialog>
@@ -48,13 +48,15 @@ export function Header() {
                   <TooltipContent>Suggest</TooltipContent>
                 </Tooltip>
               </SmartSuggestionDialog>
+               <Tooltip>
+                  <TooltipTrigger asChild>
+                   <ThemeToggle />
+                  </TooltipTrigger>
+                  <TooltipContent>Toggle Theme</TooltipContent>
+                </Tooltip>
             </TooltipProvider>
           </div>
         </nav>
-
-        <div className="flex flex-1 justify-end">
-          <ThemeToggle />
-        </div>
       </div>
     </header>
   );
