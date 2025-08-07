@@ -90,12 +90,12 @@ export function StatisticsDisplay() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <ChartContainer config={chartConfig} className="h-[250px] w-full">
+          <ChartContainer config={chartConfig} className="h-[250px] w-full max-w-[200px] mx-auto">
              <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={chartData}
                 layout="vertical"
-                margin={{ left: 10, right: 10 }}
+                margin={{ left: 0, right: 0 }}
               >
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                 <XAxis type="number" hide />
@@ -105,8 +105,9 @@ export function StatisticsDisplay() {
                   tickLine={false}
                   axisLine={false}
                   stroke="hsl(var(--muted-foreground))"
-                  tickMargin={10}
-                  width={80}
+                  tickMargin={5}
+                  width={60}
+                  tick={{ fontSize: 12 }}
                 />
                 <ChartTooltip
                   cursor={false}
