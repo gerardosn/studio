@@ -41,14 +41,14 @@ function WebsiteCard({
 
   return (
     <Card
-      className="flex flex-col h-full transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1 cursor-pointer"
+      className="flex flex-col justify-between h-full transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1 cursor-pointer"
       onClick={handleAccess}
       onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && handleAccess()}
       tabIndex={0}
       role="button"
       aria-label={`Open ${name}`}
     >
-      <CardHeader className="flex-row items-center space-x-4 pb-2">
+      <CardHeader className="flex-row items-center space-x-4 p-4">
         <Image 
             src={getFaviconUrl(url)} 
             alt={`${name} favicon`}
@@ -59,10 +59,7 @@ function WebsiteCard({
             />
         <CardTitle className="text-base font-medium truncate">{name}</CardTitle>
       </CardHeader>
-      <CardContent className="flex-grow">
-        <p className="text-sm text-muted-foreground truncate">{url}</p>
-      </CardContent>
-      <CardFooter>
+      <CardFooter className="p-4 pt-0">
         <p className="text-sm font-medium text-muted-foreground">
           Access Count: <span className="text-foreground font-bold">{count}</span>
         </p>
