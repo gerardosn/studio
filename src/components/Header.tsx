@@ -27,16 +27,16 @@ export function Header() {
         <nav className="flex flex-1 justify-end">
           <div className="flex items-center space-x-1 rounded-full border bg-background p-0.5">
             <TooltipProvider>
-              <AddWebsiteDialog>
-                 <Tooltip>
+              <Tooltip>
+                <AddWebsiteDialog>
                   <TooltipTrigger asChild>
                     <Button variant="ghost" size="icon" className="rounded-full h-8 w-8">
                       <Plus className="h-4 w-4"/>
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Add Link</TooltipContent>
-                </Tooltip>
-              </AddWebsiteDialog>
+                </AddWebsiteDialog>
+                <TooltipContent>Add Link</TooltipContent>
+              </Tooltip>
               
                <SmartSuggestionDialog>
                 <Tooltip>
