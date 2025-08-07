@@ -34,5 +34,11 @@
     "name": "Twitter",
     "url": "https://x.com",
     "count": 12
+  },
+  {
+    "id": "9a66de52-1b99-4f6c-ae6b-2f2f03878094",
+    "name": "Gemini",
+    "url": "https://gemini.google.com",
+    "count": 0
   }
 ]

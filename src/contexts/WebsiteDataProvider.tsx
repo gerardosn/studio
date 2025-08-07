@@ -13,11 +13,12 @@ import type { Website } from "@/lib/types";
 interface AddWebsiteResult {
     success: boolean;
     message?: string;
+    verificationFailed?: boolean;
 }
 
 interface WebsiteDataContextType {
   websites: Website[];
-  addWebsite: (name: string, url:string) => Promise<AddWebsiteResult>;
+  addWebsite: (name: string, url:string, force?: boolean) => Promise<AddWebsiteResult>;
   deleteWebsite: (id: string) => Promise<boolean>;
   incrementAccessCount: (id: string) => void;
   isLoaded: boolean;
@@ -54,20 +55,20 @@ export function WebsiteDataProvider({ children }: { children: ReactNode }) {
   }, [fetchWebsites]);
 
   const addWebsite = useCallback(
-    async (name: string, url: string): Promise<AddWebsiteResult> => {
+    async (name: string, url: string, force: boolean = false): Promise<AddWebsiteResult> => {
       try {
         const response = await fetch('/api/websites-file', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ name, url }),
+            body: JSON.stringify({ name, url, force }),
         });
 
         const responseData = await response.json();
 
         if (!response.ok) {
-            return { success: false, message: responseData.message || 'Failed to add website' };
+            return { success: false, message: responseData.message, verificationFailed: responseData.verificationFailed };
         }
 
         setWebsites((prev) => [...prev, responseData]);
