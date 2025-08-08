@@ -36,6 +36,26 @@ const WebsiteDataContext = createContext<WebsiteDataContextType | undefined>(
   undefined
 );
 
+const getCountsFromStorage = (): Record<string, number> => {
+    if (typeof window === 'undefined') return {};
+    try {
+        const storedCounts = window.localStorage.getItem('websiteCounts');
+        return storedCounts ? JSON.parse(storedCounts) : {};
+    } catch (error) {
+        console.error("Failed to parse counts from localStorage", error);
+        return {};
+    }
+};
+
+const setCountsToStorage = (counts: Record<string, number>) => {
+    if (typeof window === 'undefined') return;
+    try {
+        window.localStorage.setItem('websiteCounts', JSON.stringify(counts));
+    } catch (error) {
+        console.error("Failed to save counts to localStorage", error);
+    }
+};
+
 export function WebsiteDataProvider({ children }: { children: ReactNode }) {
   const [websites, setWebsites] = useState<Website[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -48,8 +68,16 @@ export function WebsiteDataProvider({ children }: { children: ReactNode }) {
       if (!response.ok) {
         throw new Error('Failed to fetch websites');
       }
-      const data = await response.json();
-      setWebsites(data);
+      const data: Website[] = await response.json();
+      const storedCounts = getCountsFromStorage();
+      
+      const mergedWebsites = data.map(site => ({
+          ...site,
+          count: storedCounts[site.id] || 0
+      }));
+
+      setWebsites(mergedWebsites);
+
     } catch (err: any) {
         console.error("Failed to fetch websites:", err);
         setError("Could not load websites. Please try again later.");
@@ -105,7 +133,7 @@ export function WebsiteDataProvider({ children }: { children: ReactNode }) {
           return { success: false, message: responseData.message, verificationFailed: responseData.verificationFailed };
         }
         setWebsites((prev) =>
-          prev.map((site) => (site.id === id ? responseData : site))
+          prev.map((site) => (site.id === id ? {...responseData, count: site.count} : site))
         );
         return { success: true };
       } catch (error) {
@@ -127,6 +155,11 @@ export function WebsiteDataProvider({ children }: { children: ReactNode }) {
         }
 
         setWebsites((prev) => prev.filter((site) => site.id !== id));
+        
+        const currentCounts = getCountsFromStorage();
+        delete currentCounts[id];
+        setCountsToStorage(currentCounts);
+
         return true;
     } catch (error) {
         console.error("Failed to delete website:", error);
@@ -136,12 +169,21 @@ export function WebsiteDataProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const incrementAccessCount = useCallback((id: string) => {
+    let newCount = 0;
     setWebsites((prev) =>
-      prev.map((site) =>
-        site.id === id ? { ...site, count: site.count + 1 } : site
-      )
+      prev.map((site) => {
+        if (site.id === id) {
+            newCount = site.count + 1;
+            return { ...site, count: newCount };
+        }
+        return site;
+      })
     );
-     // Note: This only updates local state. A PUT/PATCH request would be needed for persistence.
+     
+    const currentCounts = getCountsFromStorage();
+    currentCounts[id] = newCount;
+    setCountsToStorage(currentCounts);
+
   }, []);
 
   const value = { websites, addWebsite, editWebsite, deleteWebsite, incrementAccessCount, isLoaded };
