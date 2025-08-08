@@ -40,6 +40,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Name and URL are required' }, { status: 400 });
     }
     
+    const websites = await readDb();
+    
+    if (websites.some(site => site.url === url)) {
+        return NextResponse.json({ message: 'Website with this URL already exists' }, { status: 409 });
+    }
+
     if (!force) {
         try {
             const response = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
@@ -50,12 +56,6 @@ export async function POST(req: NextRequest) {
             console.error('URL verification failed:', fetchError);
             return NextResponse.json({ message: 'Website is not reachable. Please check the URL.', verificationFailed: true }, { status: 400 });
         }
-    }
-
-    const websites = await readDb();
-    
-    if (websites.some(site => site.url === url)) {
-        return NextResponse.json({ message: 'Website with this URL already exists' }, { status: 409 });
     }
 
     const newWebsite: Website = {
@@ -87,18 +87,6 @@ export async function PUT(req: NextRequest) {
         if (!name || !url) {
             return NextResponse.json({ message: 'Name and URL are required' }, { status: 400 });
         }
-
-        if (!force) {
-            try {
-                const response = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
-                if (!response.ok) {
-                    return NextResponse.json({ message: `Website returned a bad status: ${response.status}`, verificationFailed: true }, { status: 400 });
-                }
-            } catch (fetchError) {
-                console.error('URL verification failed:', fetchError);
-                return NextResponse.json({ message: 'Website is not reachable. Please check the URL.', verificationFailed: true }, { status: 400 });
-            }
-        }
         
         const websites = await readDb();
         const siteIndex = websites.findIndex(site => site.id === id);
@@ -110,6 +98,18 @@ export async function PUT(req: NextRequest) {
         const existingUrl = websites.find(site => site.url === url && site.id !== id);
         if (existingUrl) {
             return NextResponse.json({ message: 'Another website with this URL already exists' }, { status: 409 });
+        }
+
+        if (!force) {
+            try {
+                const response = await fetch(url, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
+                if (!response.ok) {
+                    return NextResponse.json({ message: `Website returned a bad status: ${response.status}`, verificationFailed: true }, { status: 400 });
+                }
+            } catch (fetchError) {
+                console.error('URL verification failed:', fetchError);
+                return NextResponse.json({ message: 'Website is not reachable. Please check the URL.', verificationFailed: true }, { status: 400 });
+            }
         }
         
         const updatedWebsite = { ...websites[siteIndex], name, url };
