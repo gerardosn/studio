@@ -3,6 +3,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { CheckoutButton } from "@/components/CheckoutButton";
 
 export default function SettingsPage() {
   return (
@@ -43,6 +44,18 @@ export default function SettingsPage() {
                     Manage Websites
                 </Button>
             </Link>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+            <CardTitle>Support Us</CardTitle>
+            <CardDescription>
+                If you find this application useful, please consider supporting its development.
+            </CardDescription>
+        </CardHeader>
+        <CardContent>
+            <CheckoutButton />
         </CardContent>
       </Card>
     </div>
