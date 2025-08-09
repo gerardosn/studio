@@ -1,30 +1,21 @@
+
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BarChart2, Settings, Plus, Sparkles } from "lucide-react";
+import { Home, BarChart2, Settings, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AddWebsiteDialog } from "./AddWebsiteDialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Button } from "./ui/button";
-
-const navItems = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/stats", label: "Statistics", icon: BarChart2 },
-];
-
-const actionItems = [
-    { label: "Add", icon: Plus, DialogComponent: AddWebsiteDialog },
-    { href: "/settings", label: "Settings", icon: Settings },
-]
+import { useLanguage } from "@/contexts/LanguageProvider";
 
 export function Footer() {
   const pathname = usePathname();
+  const { t } = useLanguage();
+
+  const navItems = [
+    { href: "/", label: t('home'), icon: Home },
+    { href: "/stats", label: t('statistics'), icon: BarChart2 },
+  ];
 
   return (
     <footer className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -48,7 +39,7 @@ export function Footer() {
                 "flex flex-col items-center justify-center gap-1 text-muted-foreground transition-colors hover:text-primary"
               )}>
               <Plus className="h-6 w-6" />
-              <span className="text-xs font-medium">Add</span>
+              <span className="text-xs font-medium">{t('add')}</span>
             </button>
           </AddWebsiteDialog>
           <Link
@@ -59,7 +50,7 @@ export function Footer() {
               )}
             >
               <Settings className="h-6 w-6" />
-              <span className="text-xs font-medium">Settings</span>
+              <span className="text-xs font-medium">{t('settings')}</span>
             </Link>
         </nav>
       </div>

@@ -1,4 +1,6 @@
 
+"use client";
+
 import { Settings, Trash2, Globe } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,27 +9,31 @@ import { Button } from "@/components/ui/button";
 import { CheckoutButton } from "@/components/CheckoutButton";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useLanguage } from "@/contexts/LanguageProvider";
+import type { Language } from "@/contexts/LanguageProvider";
 
 export default function SettingsPage() {
+  const { language, setLanguage, t } = useLanguage();
+
   return (
     <div className="w-full space-y-8 mx-auto">
       <div className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('settingsTitle')}</h1>
         <p className="text-muted-foreground">
-          Manage your application settings.
+          {t('settingsDescription')}
         </p>
       </div>
 
        <Card>
         <CardHeader>
-          <CardTitle>Appearance</CardTitle>
+          <CardTitle>{t('appearanceTitle')}</CardTitle>
           <CardDescription>
-            Customize the look and feel of your application.
+            {t('appearanceDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
-            <span className="font-medium">Toggle Theme</span>
+            <span className="font-medium">{t('toggleTheme')}</span>
             <ThemeToggle />
           </div>
         </CardContent>
@@ -35,15 +41,15 @@ export default function SettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Language</CardTitle>
+          <CardTitle>{t('languageTitle')}</CardTitle>
           <CardDescription>
-            Choose your preferred language for the application.
+            {t('languageDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
             <div className="grid gap-2">
-                <Label htmlFor="language-select">Select Language</Label>
-                <Select defaultValue="en">
+                <Label htmlFor="language-select">{t('selectLanguage')}</Label>
+                <Select value={language} onValueChange={(value) => setLanguage(value as Language)}>
                     <SelectTrigger id="language-select">
                         <SelectValue placeholder="Select language" />
                     </SelectTrigger>
@@ -58,16 +64,16 @@ export default function SettingsPage() {
 
       <Card>
         <CardHeader>
-            <CardTitle>Data Management</CardTitle>
+            <CardTitle>{t('dataManagementTitle')}</CardTitle>
             <CardDescription>
-                Modify your saved websites.
+                {t('dataManagementDescription')}
             </CardDescription>
         </CardHeader>
         <CardContent>
             <Link href="/settings/manage-websites" passHref>
                 <Button variant="outline" className="w-full">
                     <Trash2 className="mr-2 h-4 w-4" />
-                    Manage Websites
+                    {t('manageWebsites')}
                 </Button>
             </Link>
         </CardContent>
@@ -75,9 +81,9 @@ export default function SettingsPage() {
 
       <Card>
         <CardHeader>
-            <CardTitle>Support Us</CardTitle>
+            <CardTitle>{t('supportUsTitle')}</CardTitle>
             <CardDescription>
-                If you find this application useful, please consider supporting its development.
+                {t('supportUsDescription')}
             </CardDescription>
         </CardHeader>
         <CardContent>

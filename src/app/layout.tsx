@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { WebsiteDataProvider } from "@/contexts/WebsiteDataProvider";
+import { LanguageProvider } from "@/contexts/LanguageProvider";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -40,16 +41,18 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <WebsiteDataProvider>
-            <div className="flex min-h-screen w-full flex-col">
-              <Header />
-              <main className="flex-1 container mx-auto p-4 md:p-6 pb-24" style={{ maxWidth: '360px' }}>
-                {children}
-              </main>
-              <Footer />
-              <Toaster />
-            </div>
-          </WebsiteDataProvider>
+          <LanguageProvider>
+            <WebsiteDataProvider>
+              <div className="flex min-h-screen w-full flex-col">
+                <Header />
+                <main className="flex-1 container mx-auto p-4 md:p-6 pb-24" style={{ maxWidth: '360px' }}>
+                  {children}
+                </main>
+                <Footer />
+                <Toaster />
+              </div>
+            </WebsiteDataProvider>
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>
