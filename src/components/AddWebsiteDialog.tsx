@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState, type ReactNode, useMemo } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -36,15 +36,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useWebsiteData } from "@/contexts/WebsiteDataProvider";
 import { useToast } from "@/hooks/use-toast";
-
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  url: z.string().min(1, { message: "URL cannot be empty." }),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+import { useLanguage } from "@/contexts/LanguageProvider";
 
 export function AddWebsiteDialog({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -52,6 +44,16 @@ export function AddWebsiteDialog({ children }: { children: ReactNode }) {
   const [failedUrl, setFailedUrl] = useState<FormValues | null>(null);
   const { addWebsite } = useWebsiteData();
   const { toast } = useToast();
+  const { t } = useLanguage();
+
+  const formSchema = useMemo(() => z.object({
+    name: z.string().min(2, {
+      message: t('nameMinLength'),
+    }),
+    url: z.string().min(1, { message: t('urlMinLength') }),
+  }), [t]);
+
+  type FormValues = z.infer<typeof formSchema>;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -72,7 +74,7 @@ export function AddWebsiteDialog({ children }: { children: ReactNode }) {
       if (!urlCheck.success) {
         form.setError("url", {
           type: "manual",
-          message: "Please enter a valid URL.",
+          message: t('validUrlError'),
         });
         return;
       }
@@ -81,8 +83,8 @@ export function AddWebsiteDialog({ children }: { children: ReactNode }) {
 
       if (result.success) {
         toast({
-          title: "Website Added",
-          description: `${values.name} has been added to your list.`,
+          title: t('websiteAddedToastTitle'),
+          description: t('websiteAddedToastDescription', { name: values.name }),
         });
         form.reset();
         setOpen(false);
@@ -94,7 +96,7 @@ export function AddWebsiteDialog({ children }: { children: ReactNode }) {
       } else {
         toast({
           variant: "destructive",
-          title: "Error Adding Website",
+          title: t('errorAddingWebsiteToastTitle'),
           description: result.message || "An unknown error occurred.",
         });
       }
@@ -138,9 +140,9 @@ export function AddWebsiteDialog({ children }: { children: ReactNode }) {
         <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Add New Website</DialogTitle>
+            <DialogTitle>{t('addNewWebsiteTitle')}</DialogTitle>
             <DialogDescription>
-              Enter the details of the website you want to track.
+             {t('addNewWebsiteDescription')}
             </DialogDescription>
           </DialogHeader>
           <Form {...form}>
@@ -150,7 +152,7 @@ export function AddWebsiteDialog({ children }: { children: ReactNode }) {
                 name="url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Website URL</FormLabel>
+                    <FormLabel>{t('websiteUrlLabel')}</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="example.com"
@@ -167,7 +169,7 @@ export function AddWebsiteDialog({ children }: { children: ReactNode }) {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Display Name</FormLabel>
+                    <FormLabel>{t('displayNameLabel')}</FormLabel>
                     <FormControl>
                       <Input placeholder="Example" {...field} />
                     </FormControl>
@@ -176,7 +178,7 @@ export function AddWebsiteDialog({ children }: { children: ReactNode }) {
                 )}
               />
               <DialogFooter>
-                <Button type="submit">Add Website</Button>
+                <Button type="submit">{t('addWebsiteButton')}</Button>
               </DialogFooter>
             </form>
           </Form>
@@ -188,16 +190,15 @@ export function AddWebsiteDialog({ children }: { children: ReactNode }) {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Website Unreachable</AlertDialogTitle>
+            <AlertDialogTitle>{t('verificationAlertTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              The URL could not be verified. It might be incorrect, or the
-              website might be temporarily down. Do you want to add it anyway?
+              {t('verificationAlertDescription')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('cancelButton')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleForceAdd}>
-              Add Anyway
+              {t('addAnywayButton')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

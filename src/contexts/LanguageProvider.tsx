@@ -8,7 +8,7 @@ export type Language = 'en' | 'es';
 interface LanguageContextType {
     language: Language;
     setLanguage: (language: Language) => void;
-    t: (key: keyof (typeof translations)['en']) => string;
+    t: (key: keyof (typeof translations)['en'], vars?: Record<string, string>) => string;
 }
 
 const translations = {
@@ -30,6 +30,29 @@ const translations = {
         manageWebsites: 'Manage Websites',
         supportUsTitle: 'Support Us',
         supportUsDescription: 'If you find this application useful, please consider supporting its development.',
+        
+        // Add Website Dialog
+        addNewWebsiteTitle: "Add New Website",
+        addNewWebsiteDescription: "Enter the details of the website you want to track.",
+        websiteUrlLabel: "Website URL",
+        displayNameLabel: "Display Name",
+        addWebsiteButton: "Add Website",
+        
+        // Toasts for Add/Edit
+        websiteAddedToastTitle: "Website Added",
+        websiteAddedToastDescription: "{{name}} has been added to your list.",
+        errorAddingWebsiteToastTitle: "Error Adding Website",
+        validUrlError: "Please enter a valid URL.",
+        
+        // Validation Messages
+        nameMinLength: "Name must be at least 2 characters.",
+        urlMinLength: "URL cannot be empty.",
+        
+        // Verification Alert
+        verificationAlertTitle: "Website Unreachable",
+        verificationAlertDescription: "The URL could not be verified. It might be incorrect, or the website might be temporarily down. Do you want to add it anyway?",
+        cancelButton: "Cancel",
+        addAnywayButton: "Add Anyway",
     },
     es: {
         home: 'Inicio',
@@ -49,6 +72,29 @@ const translations = {
         manageWebsites: 'Gestionar Sitios Web',
         supportUsTitle: 'Apóyanos',
         supportUsDescription: 'Si encuentras útil esta aplicación, considera apoyar su desarrollo.',
+        
+        // Add Website Dialog
+        addNewWebsiteTitle: "Añadir Nuevo Sitio Web",
+        addNewWebsiteDescription: "Introduce los detalles del sitio web que deseas rastrear.",
+        websiteUrlLabel: "URL del Sitio Web",
+        displayNameLabel: "Nombre a Mostrar",
+        addWebsiteButton: "Añadir Sitio Web",
+        
+        // Toasts for Add/Edit
+        websiteAddedToastTitle: "Sitio Web Añadido",
+        websiteAddedToastDescription: "{{name}} ha sido añadido a tu lista.",
+        errorAddingWebsiteToastTitle: "Error al Añadir el Sitio Web",
+        validUrlError: "Por favor, introduce una URL válida.",
+        
+        // Validation Messages
+        nameMinLength: "El nombre debe tener al menos 2 caracteres.",
+        urlMinLength: "La URL no puede estar vacía.",
+
+        // Verification Alert
+        verificationAlertTitle: "Sitio Web Inaccesible",
+        verificationAlertDescription: "La URL no pudo ser verificada. Podría ser incorrecta o el sitio web podría estar temporalmente caído. ¿Deseas añadirlo de todos modos?",
+        cancelButton: "Cancelar",
+        addAnywayButton: "Añadir de todos modos",
     }
 };
 
@@ -87,8 +133,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         setLanguageState(lang);
     };
 
-    const t = useMemo(() => (key: keyof (typeof translations)['en']): string => {
-        return translations[language][key] || translations['en'][key];
+    const t = useMemo(() => (key: keyof (typeof translations)['en'], vars?: Record<string, string>): string => {
+        let translation = translations[language][key] || translations['en'][key];
+        if (vars) {
+            Object.keys(vars).forEach(varKey => {
+                translation = translation.replace(`{{${varKey}}}`, vars[varKey]);
+            });
+        }
+        return translation;
     }, [language]);
 
     const value = { language, setLanguage, t };
