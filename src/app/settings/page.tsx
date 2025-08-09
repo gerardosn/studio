@@ -1,9 +1,12 @@
-import { Settings, Trash2 } from "lucide-react";
+
+import { Settings, Trash2, Globe } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CheckoutButton } from "@/components/CheckoutButton";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function SettingsPage() {
   return (
@@ -27,6 +30,29 @@ export default function SettingsPage() {
             <span className="font-medium">Toggle Theme</span>
             <ThemeToggle />
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Language</CardTitle>
+          <CardDescription>
+            Choose your preferred language for the application.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+            <div className="grid gap-2">
+                <Label htmlFor="language-select">Select Language</Label>
+                <Select defaultValue="en">
+                    <SelectTrigger id="language-select">
+                        <SelectValue placeholder="Select language" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="en">English</SelectItem>
+                        <SelectItem value="es">Español</SelectItem>
+                    </SelectContent>
+                </Select>
+            </div>
         </CardContent>
       </Card>
 
