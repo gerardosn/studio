@@ -5,42 +5,8 @@ import { ManageWebsites } from "@/components/ManageWebsites";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
-import { useAuth } from "@/contexts/AuthProvider";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ManageWebsitesPage() {
-  const { isAuthenticated, isLoaded, logout } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (isLoaded && !isAuthenticated) {
-      router.replace('/settings');
-    }
-  }, [isAuthenticated, isLoaded, router]);
-
-  useEffect(() => {
-    return () => {
-      logout();
-    };
-  }, [logout]);
-
-  if (!isLoaded || !isAuthenticated) {
-    return (
-        <div className="flex justify-center items-center h-full pt-12">
-            <Card>
-                <CardHeader>
-                    <CardTitle>Loading...</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p>Verifying authentication status.</p>
-                </CardContent>
-            </Card>
-        </div>
-    );
-  }
-
   return (
     <div className="w-full space-y-8 mx-auto">
        <div className="flex items-center gap-4">
@@ -53,7 +19,7 @@ export default function ManageWebsitesPage() {
         <div className="text-left">
             <h1 className="text-3xl font-bold tracking-tight">Manage Websites</h1>
             <p className="text-muted-foreground">
-            Delete websites you no longer want to track.
+            Delete or edit websites you no longer want to track.
             </p>
         </div>
       </div>
