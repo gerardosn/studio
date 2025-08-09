@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ManageWebsitesPage() {
   const { isAuthenticated, isLoaded, logout } = useAuth();
