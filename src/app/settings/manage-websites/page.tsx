@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function ManageWebsitesPage() {
-  const { isAuthenticated, isLoaded } = useAuth();
+  const { isAuthenticated, isLoaded, logout } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -18,6 +18,16 @@ export default function ManageWebsitesPage() {
       router.push('/login?redirect=/settings/manage-websites');
     }
   }, [isAuthenticated, isLoaded, router]);
+
+  useEffect(() => {
+    // This cleanup function will be called when the component unmounts.
+    return () => {
+      logout();
+    };
+    // The empty dependency array means this effect runs only once on mount,
+    // and its cleanup runs only once on unmount.
+    // We add logout to dependencies to satisfy the linter.
+  }, [logout]);
 
   if (!isLoaded || !isAuthenticated) {
     return (
