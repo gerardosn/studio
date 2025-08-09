@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useAuth } from "@/contexts/AuthProvider";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function ManageWebsitesPage() {
   const { isAuthenticated, isLoaded, logout } = useAuth();
@@ -15,24 +16,27 @@ export default function ManageWebsitesPage() {
 
   useEffect(() => {
     if (isLoaded && !isAuthenticated) {
-      router.push('/login?redirect=/settings/manage-websites');
+      router.replace('/settings');
     }
   }, [isAuthenticated, isLoaded, router]);
 
   useEffect(() => {
-    // This cleanup function will be called when the component unmounts.
     return () => {
       logout();
     };
-    // The empty dependency array means this effect runs only once on mount,
-    // and its cleanup runs only once on unmount.
-    // We add logout to dependencies to satisfy the linter.
   }, [logout]);
 
   if (!isLoaded || !isAuthenticated) {
     return (
-        <div className="flex justify-center items-center h-full">
-            <p>Loading...</p>
+        <div className="flex justify-center items-center h-full pt-12">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Loading...</CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <p>Verifying authentication status.</p>
+                </CardContent>
+            </Card>
         </div>
     );
   }

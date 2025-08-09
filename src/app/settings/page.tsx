@@ -4,7 +4,6 @@
 import { Settings, Trash2, Globe, LogOut } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CheckoutButton } from "@/components/CheckoutButton";
 import { Label } from "@/components/ui/label";
@@ -12,10 +11,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useLanguage } from "@/contexts/LanguageProvider";
 import type { Language } from "@/contexts/LanguageProvider";
 import { useAuth } from "@/contexts/AuthProvider";
+import { LoginDialog } from "@/components/LoginDialog";
+import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
   const { language, setLanguage, t } = useLanguage();
   const { isAuthenticated, logout } = useAuth();
+  const router = useRouter();
+
+  const handleManageClick = () => {
+    router.push('/settings/manage-websites');
+  };
 
   return (
     <div className="w-full space-y-8 mx-auto">
@@ -72,12 +78,19 @@ export default function SettingsPage() {
             </CardDescription>
         </CardHeader>
         <CardContent>
-            <Link href="/settings/manage-websites" passHref>
-                <Button variant="outline" className="w-full">
+            {isAuthenticated ? (
+                 <Button variant="outline" className="w-full" onClick={handleManageClick}>
                     <Trash2 className="mr-2 h-4 w-4" />
                     {t('manageWebsites')}
                 </Button>
-            </Link>
+            ) : (
+                <LoginDialog onLoginSuccess={handleManageClick}>
+                    <Button variant="outline" className="w-full">
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        {t('manageWebsites')}
+                    </Button>
+                </LoginDialog>
+            )}
         </CardContent>
       </Card>
       
