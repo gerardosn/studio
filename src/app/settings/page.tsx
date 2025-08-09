@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Settings, Trash2, Globe } from "lucide-react";
+import { Settings, Trash2, Globe, LogOut } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
@@ -11,9 +11,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useLanguage } from "@/contexts/LanguageProvider";
 import type { Language } from "@/contexts/LanguageProvider";
+import { useAuth } from "@/contexts/AuthProvider";
 
 export default function SettingsPage() {
   const { language, setLanguage, t } = useLanguage();
+  const { isAuthenticated, logout } = useAuth();
 
   return (
     <div className="w-full space-y-8 mx-auto">
@@ -78,6 +80,23 @@ export default function SettingsPage() {
             </Link>
         </CardContent>
       </Card>
+      
+      {isAuthenticated && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Authentication</CardTitle>
+            <CardDescription>
+              You are currently logged in as an administrator.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" className="w-full" onClick={logout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Logout
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
