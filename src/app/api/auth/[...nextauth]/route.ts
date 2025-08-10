@@ -1,5 +1,19 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
+import fs from 'fs/promises';
+import path from 'path';
+
+const dbPath = path.join(process.cwd(), 'UsersFakeDB.json');
+
+async function getUsers() {
+  try {
+    const data = await fs.readFile(dbPath, 'utf-8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error("Failed to read user database:", error);
+    return [];
+  }
+}
 
 const handler = NextAuth({
   providers: [
@@ -15,17 +29,10 @@ const handler = NextAuth({
         }
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/users`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ user: credentials.username, Password: credentials.password }),
-            });
-
-            const data = await res.json();
+            const users = await getUsers();
+            const foundUser = users.find((u: any) => u.user === credentials.username && u.Password === credentials.password);
             
-            if (res.ok && data.success) {
+            if (foundUser) {
                 return { id: credentials.username, name: credentials.username, email: '' }; 
             } else {
                 return null;
@@ -52,7 +59,8 @@ const handler = NextAuth({
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string;
+        // This is a type augmentation, so we need to assert the type.
+        (session.user as { id?: string }).id = token.id as string;
       }
       return session;
     }
