@@ -1,3 +1,4 @@
+
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
@@ -7,6 +8,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { WebsiteDataProvider } from "@/contexts/WebsiteDataProvider";
 import { LanguageProvider } from "@/contexts/LanguageProvider";
+import AuthProvider from "@/contexts/AuthProvider";
 
 const roboto = Roboto({
   subsets: ["latin"],
@@ -35,25 +37,27 @@ export default function RootLayout({
         />
       </head>
       <body className={`${roboto.variable} font-body antialiased`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-            <LanguageProvider>
-              <WebsiteDataProvider>
-                <div className="flex min-h-screen w-full flex-col">
-                  <Header />
-                  <main className="flex-1 container mx-auto p-4 md:p-6 pb-24" style={{ maxWidth: '360px' }}>
-                    {children}
-                  </main>
-                  <Footer />
-                  <Toaster />
-                </div>
-              </WebsiteDataProvider>
-            </LanguageProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+              <LanguageProvider>
+                <WebsiteDataProvider>
+                  <div className="flex min-h-screen w-full flex-col">
+                    <Header />
+                    <main className="flex-1 container mx-auto p-4 md:p-6 pb-24" style={{ maxWidth: '360px' }}>
+                      {children}
+                    </main>
+                    <Footer />
+                    <Toaster />
+                  </div>
+                </WebsiteDataProvider>
+              </LanguageProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

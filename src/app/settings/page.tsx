@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Settings, Trash2, Globe } from "lucide-react";
+import { Settings, Trash2, Globe, LogOut } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,9 +11,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useLanguage } from "@/contexts/LanguageProvider";
 import type { Language } from "@/contexts/LanguageProvider";
 import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
 
 export default function SettingsPage() {
   const { language, setLanguage, t } = useLanguage();
+  const { data: session, status } = useSession();
 
   return (
     <div className="w-full space-y-8 mx-auto">
@@ -69,13 +71,19 @@ export default function SettingsPage() {
                 {t('dataManagementDescription')}
             </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-2">
             <Button asChild variant="outline" className="w-full">
                 <Link href="/settings/manage-websites">
                     <Trash2 className="mr-2 h-4 w-4" />
                     {t('manageWebsites')}
                 </Link>
             </Button>
+             {status === "authenticated" && (
+              <Button variant="ghost" className="w-full" onClick={() => signOut({ callbackUrl: '/' })}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </Button>
+            )}
         </CardContent>
       </Card>
 
@@ -93,3 +101,4 @@ export default function SettingsPage() {
     </div>
   );
 }
+
