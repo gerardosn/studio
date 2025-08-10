@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Settings, Trash2, Globe, LogOut } from "lucide-react";
+import { Settings, Trash2, Globe, LogOut, Users } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -78,6 +78,12 @@ export default function SettingsPage() {
                     {t('manageWebsites')}
                 </Link>
             </Button>
+            <Button asChild variant="outline" className="w-full">
+                <Link href="/settings/manage-users">
+                    <Users className="mr-2 h-4 w-4" />
+                    Manage Users
+                </Link>
+            </Button>
              {status === "authenticated" && (
               <Button variant="ghost" className="w-full" onClick={() => signOut({ callbackUrl: '/' })}>
                 <LogOut className="mr-2 h-4 w-4" />
@@ -101,4 +107,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
